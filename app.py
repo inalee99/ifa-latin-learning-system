@@ -1,6 +1,19 @@
 import sqlite3
 from flask import Flask, render_template, request
 
+
+
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+
+
 app = Flask(__name__)
 
 
@@ -132,6 +145,80 @@ OpenAI API 尚未啟用。
 """
 
 
+def generate_openai_memory_tip(plant):
+    prompt = f"""
+你是一位芳療植物拉丁文學習助理。
+請用繁體中文，幫考生記憶以下植物拉丁學名。
+
+中文名：{plant["chinese_name"]}
+英文名：{plant["english_name"]}
+拉丁名：{plant["latin_name"]}
+屬名：{plant["genus"]}
+種名：{plant["species"]}
+
+請輸出：
+1. 拉丁名拆解
+2. 字根或可能意思
+3. 記憶口訣
+4. 考試提醒
+
+如果詞源不確定，請寫「可能與……有關」，不要硬編。
+"""
+
+    try:
+        response = client.responses.create(
+            model="gpt-4.1-mini",
+            input=prompt
+        )
+
+        return response.output_text
+
+    except Exception as e:
+        return f"AI 暫時無法產生內容：{str(e)}"
+
+
+
+
+
+def get_cached_ai(plant_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT ai_explanation
+        FROM ai_cache
+        WHERE plant_id = ?
+    """, (plant_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    if row:
+        return row["ai_explanation"]
+
+    return None
+
+
+def save_ai_cache(plant_id, ai_explanation):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT OR REPLACE INTO ai_cache (
+            plant_id,
+            ai_explanation
+        )
+        VALUES (?, ?)
+    """, (
+        plant_id,
+        ai_explanation
+    ))
+
+    conn.commit()
+    conn.close()
+
+
+
 def save_attempt(plant_id, user_answer, correct_answer, is_correct):
     conn = get_connection()
     cursor = conn.cursor()
@@ -236,17 +323,27 @@ def search():
         plants=plants
     )
 
-@app.route("/plant/<int:plant_id>")
+@app.route("/plant/<int:plant_id>", methods=["GET", "POST"])
 def plant_detail(plant_id):
 
     plant = get_plant_detail(plant_id)
+    ai_memory = None
+
+    if request.method == "POST":
+
+        cached = get_cached_ai(plant["id"])
+
+        if cached:
+            ai_memory = cached
+        else:
+            ai_memory = generate_openai_memory_tip(plant)
+            save_ai_cache(plant["id"], ai_memory)
 
     return render_template(
         "plant_detail.html",
-        plant=plant
+        plant=plant,
+        ai_memory=ai_memory
     )
-
-
 
 @app.route("/practice", methods=["GET", "POST"])
 def practice():

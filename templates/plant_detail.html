@@ -228,19 +228,22 @@
     </div>
 
     <div class="card">
-        <h2>🧠 AI 字根記憶助理</h2>
+    <h2>🧠 AI 字根記憶助理</h2>
 
-        <div class="ai-box">
-OpenAI API 尚未啟用
+    <form method="POST">
+        <button class="speak-btn" type="submit">
+            產生 AI 記憶法
+        </button>
+    </form>
 
-未來將自動產生：
-
-【拉丁文字根解析】
-【德式拉丁文發音】
-【記憶口訣】
-【考試重點】
-        </div>
+    <div class="ai-box">
+        {% if ai_memory %}
+            {{ ai_memory }}
+        {% else %}
+            點擊上方按鈕後，AI 將根據植物拉丁學名產生字根解析、記憶口訣與考試提醒。
+        {% endif %}
     </div>
+</div>
 
     <a href="/search" class="btn btn-green">🔍 回搜尋</a>
     <a href="/" class="btn btn-light">🏠 回首頁</a>
