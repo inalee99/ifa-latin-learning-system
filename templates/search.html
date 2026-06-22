@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>植物搜尋</title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:"Microsoft JhengHei",sans-serif;
+            background:linear-gradient(135deg,#f5f1ea,#e8efe1);
+            color:#444;
+        }
+
+        .container{
+            max-width:1000px;
+            margin:40px auto;
+            padding:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:24px;
+            padding:30px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.08);
+            margin-bottom:20px;
+        }
+
+        h1{
+            color:#66764b;
+        }
+
+        input[type=text]{
+            width:70%;
+            padding:12px;
+            border:1px solid #ccc;
+            border-radius:10px;
+            font-size:16px;
+        }
+
+        button{
+            padding:12px 18px;
+            border:none;
+            border-radius:10px;
+            background:#7b8d5c;
+            color:white;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#66764b;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            background:#f3f7ee;
+            padding:12px;
+        }
+
+        td{
+            padding:12px;
+            border-bottom:1px solid #eee;
+        }
+
+        .latin{
+            font-style:italic;
+            color:#5b6c44;
+            font-weight:bold;
+        }
+
+        .btn{
+            display:inline-block;
+            padding:12px 18px;
+            background:#f3f3f3;
+            border-radius:10px;
+            text-decoration:none;
+            color:#555;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>🔍 植物搜尋</h1>
+
+        <form method="POST">
+
+            <input
+                type="text"
+                name="keyword"
+                placeholder="輸入中文名、英文名或拉丁名">
+
+            <button type="submit">
+                搜尋
+            </button>
+
+        </form>
+
+    </div>
+
+    {% if plants %}
+
+    <div class="card">
+
+        <h2>搜尋結果</h2>
+
+        <table>
+
+            <tr>
+                <th>中文名</th>
+                <th>英文名</th>
+                <th>拉丁名</th>
+                <th>詳細資料</th>
+            </tr>
+
+            {% for plant in plants %}
+
+            <tr>
+
+    <td>{{ plant["chinese_name"] }}</td>
+
+    <td>{{ plant["english_name"] }}</td>
+
+    <td class="latin">
+        {{ plant["latin_name"] }}
+    </td>
+
+    <td>
+        <a
+            href="/plant/{{ plant['id'] }}"
+            class="btn">
+            查看詳細
+        </a>
+    </td>
+
+</tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+    {% endif %}
+
+    <a href="/" class="btn">
+        🏠 回首頁
+    </a>
+
+</div>
+
+</body>
+
+</html>

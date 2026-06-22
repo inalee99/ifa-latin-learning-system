@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFA植物拉丁文默寫</title>
+
+```
+<style>
+
+    body{
+        margin:0;
+        padding:0;
+        background:#f5f1ea;
+        font-family:"Microsoft JhengHei",sans-serif;
+        color:#444;
+    }
+
+    .container{
+        width:90%;
+        max-width:850px;
+        margin:30px auto;
+    }
+
+    .card{
+        background:white;
+        border-radius:20px;
+        padding:30px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom:20px;
+    }
+
+    h1{
+        text-align:center;
+        color:#6c7a52;
+        margin-bottom:5px;
+    }
+
+    .subtitle{
+        text-align:center;
+        color:#888;
+        margin-bottom:25px;
+    }
+
+    .plant-box{
+        background:#f8f7f3;
+        border-left:6px solid #92a878;
+        padding:15px;
+        border-radius:10px;
+        margin:20px 0;
+    }
+
+    .latin{
+        font-style:italic;
+        color:#4e5c3c;
+        font-weight:bold;
+    }
+
+    input[type=text]{
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+        font-size:16px;
+        box-sizing:border-box;
+    }
+
+    .main-btn{
+        width:100%;
+        margin-top:15px;
+        padding:14px;
+        border:none;
+        border-radius:10px;
+        background:#7b8d5c;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+    }
+
+    .main-btn:hover{
+        background:#66764b;
+    }
+
+    .speak-btn{
+        margin-left:10px;
+        border:none;
+        background:#dce7cf;
+        color:#4d5d3f;
+        border-radius:8px;
+        padding:6px 12px;
+        cursor:pointer;
+    }
+
+    .speak-btn:hover{
+        background:#c9d8b7;
+    }
+
+    .result-box{
+        background:#eef6ea;
+        border-left:6px solid #77aa6a;
+        padding:15px;
+        border-radius:10px;
+    }
+
+    .ai-box{
+        background:#fffdf8;
+        border:1px solid #e4dccf;
+        border-radius:12px;
+        padding:20px;
+        line-height:1.8;
+        white-space:pre-line;
+    }
+
+    .links{
+        text-align:center;
+        margin-top:20px;
+    }
+
+    .links a{
+        text-decoration:none;
+        color:#6c7a52;
+        margin:0 10px;
+    }
+
+    .links a:hover{
+        text-decoration:underline;
+    }
+
+</style>
+```
+
+</head>
+<body>
+
+<div class="container">
+
+```
+<h1>🌿 IFA 植物拉丁文默寫</h1>
+<div class="subtitle">
+    Aromatherapy Latin Name Practice
+</div>
+
+{% if result %}
+
+<div class="card">
+
+    <div class="result-box">
+
+        <h3>{{ result }}</h3>
+
+        <p>
+            <strong>上一題：</strong>
+            {{ old_plant["chinese_name"] }}
+            /
+            {{ old_plant["english_name"] }}
+        </p>
+
+        <p>
+            <strong>正確拉丁名：</strong>
+            <span class="latin">
+                {{ old_plant["latin_name"] }}
+            </span>
+
+            <button
+                class="speak-btn"
+                onclick="speakLatin('{{ old_plant['latin_name'] }}')">
+                🔊 拉丁文
+            </button>
+        </p>
+
+    </div>
+
+</div>
+
+{% if ai_explanation %}
+
+<div class="card">
+
+    <h3>🧠 AI 字根記憶助理</h3>
+
+    <div class="ai-box">
+        {{ ai_explanation }}
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endif %}
+
+<div class="card">
+
+    <h2>請寫出這個植物的拉丁學名</h2>
+
+    <div class="plant-box">
+
+        <p>
+            <strong>中文名：</strong>
+            {{ plant["chinese_name"] }}
+        </p>
+
+        <p>
+            <strong>英文名：</strong>
+            {{ plant["english_name"] }}
+
+            <button
+                class="speak-btn"
+                onclick="speakEnglish('{{ plant['english_name'] }}')">
+                🔊 英文
+            </button>
+        </p>
+
+    </div>
+
+    <form method="POST">
+
+        <input
+            type="hidden"
+            name="plant_id"
+            value="{{ plant['id'] }}">
+
+        <input
+            type="text"
+            name="answer"
+            placeholder="請輸入拉丁學名">
+
+        <button
+            class="main-btn"
+            type="submit">
+            送出答案
+        </button>
+
+    </form>
+
+</div>
+
+<div class="links">
+
+    <a href="/stats">📊 學習統計</a>
+
+    |
+
+    <a href="/">🏠 回首頁</a>
+
+</div>
+```
+
+</div>
+
+<script>
+
+function speakEnglish(text){
+
+    let utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "en-US";
+
+    speechSynthesis.speak(utterance);
+
+}
+
+function speakLatin(text){
+
+    let utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "en-US";
+
+    speechSynthesis.speak(utterance);
+
+}
+
+</script>
+
+</body>
+</html>
